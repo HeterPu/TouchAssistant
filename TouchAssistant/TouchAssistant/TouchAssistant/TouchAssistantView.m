@@ -23,13 +23,18 @@
 @end
 @implementation TouchAssistantView
 
+static TouchAssistantView* _instance = nil;
 
 +(instancetype)TAWithBigArrary:(NSArray *)arra
             andInitialPosition:(CGPoint)point {
-    TouchAssistantView *view = [[TouchAssistantView alloc]initWithFrame:CGRectMake(point.x, point.y, kTAWidth, kTAWidth)];
-    view.bigarray = arra;
-    view.lastPoint = CGPointMake(point.x, point.y);
-    return view;
+    static dispatch_once_t onceToken ;
+    dispatch_once(&onceToken, ^{
+        _instance = [[TouchAssistantView alloc]initWithFrame:CGRectMake(point.x, point.y, kTAWidth, kTAWidth)];
+        _instance.bigarray = arra;
+        _instance.lastPoint = CGPointMake(point.x, point.y);
+    }) ;
+    
+    return _instance ;
 }
 
 
@@ -107,8 +112,10 @@
         btn.tag = i;
         btn.center = lastCenter;
         CGPoint point = [[NumberPosition shareNumInstance] getPositionFromType:style1 andNumber:num.integerValue];
+        btn.alpha = 0;
         [UIView animateWithDuration:1 animations:^{
             btn.center = point;
+            btn.alpha = 1;
         }];
         
         [btn setImage:[UIImage imageNamed:[arra[i] valueForKey:@"pic"]] forState:UIControlStateNormal];
@@ -118,7 +125,7 @@
     UIImageView *left_arrow = [[UIImageView alloc]init];
     left_arrow.image = [UIImage imageNamed:@"arrowleft"];
 
-    left_arrow.bounds = CGRectMake(0, 0, KViewWidth / 4, KViewWidth / 4);
+    left_arrow.bounds = CGRectMake(0, 0, KViewWidth / 5, KViewWidth / 5);
     left_arrow.center = lastCenter;
     
     CGPoint arrowP = [[NumberPosition shareNumInstance] getPositionFromType:NumberStyle8 andNumber:5];
@@ -173,6 +180,7 @@
         CGPoint center = [[NumberPosition shareNumInstance] getPositionFromType:NumberStyle4 andNumber:index];
         [UIView animateWithDuration:1 animations:^{
             view.center = center;
+            view.alpha = 0;
         }];
     }
     NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(removeAndAdd) userInfo:nil repeats:NO];
