@@ -10,8 +10,9 @@
 #import "NumberPosition.h"
 
 #define  screenS [UIScreen mainScreen].bounds.size
-#define kTAWidth  50
+#define kTAWidth  62
 #define KViewWidth 300
+#define KAnimationSpeed  0.3
 
 @interface TouchAssistantView()
 @property (nonatomic,assign)NSInteger cengCount;
@@ -49,7 +50,7 @@ static TouchAssistantView* _instance = nil;
 -(void)magnify:(UIGestureRecognizer *)gesture {
     if (!_cengCount) {
         
-        [UIView animateWithDuration:1 animations:^{
+        [UIView animateWithDuration:KAnimationSpeed animations:^{
             self.frame = CGRectMake((screenS.width - KViewWidth) / 2, (screenS.height - KViewWidth) / 2, KViewWidth, KViewWidth);
             self.layer.cornerRadius = 10;
         } completion:^(BOOL finished) {
@@ -61,7 +62,7 @@ static TouchAssistantView* _instance = nil;
     else if(_cengCount == 1)
     {
         [self removeSubView];
-        [UIView animateWithDuration:1 animations:^{
+        [UIView animateWithDuration:KAnimationSpeed animations:^{
             self.frame = CGRectMake(_lastPoint.x, _lastPoint.y, kTAWidth, kTAWidth);
         } completion:^(BOOL finished) {
             
@@ -129,7 +130,7 @@ static TouchAssistantView* _instance = nil;
     left_arrow.center = lastCenter;
     
     CGPoint arrowP = [[NumberPosition shareNumInstance] getPositionFromType:NumberStyle8 andNumber:5];
-    [UIView animateWithDuration:1 animations:^{
+    [UIView animateWithDuration:KAnimationSpeed animations:^{
         left_arrow.center = arrowP;
     }];
     [self addSubview:left_arrow];
@@ -178,12 +179,12 @@ static TouchAssistantView* _instance = nil;
 -(void)backBTNclick:(NSInteger)index {
     for (UIView *view in self.subviews) {
         CGPoint center = [[NumberPosition shareNumInstance] getPositionFromType:NumberStyle4 andNumber:index];
-        [UIView animateWithDuration:1 animations:^{
+        [UIView animateWithDuration:KAnimationSpeed animations:^{
             view.center = center;
             view.alpha = 0;
         }];
     }
-    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(removeAndAdd) userInfo:nil repeats:NO];
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:KAnimationSpeed target:self selector:@selector(removeAndAdd) userInfo:nil repeats:NO];
     [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
 }
 
